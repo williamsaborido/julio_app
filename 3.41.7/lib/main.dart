@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:julio_app/core/system_theme.dart';
+import 'package:julio_app/services/database.dart';
 import 'package:julio_app/view/home/home_view.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+       Provider<Database>(create: (_) => Database()),
        ChangeNotifierProvider<SystemTheme>(create: (_) => SystemTheme()),
       ],
       child: Builder(

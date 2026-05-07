@@ -1,4 +1,4 @@
-# Julio App
+# Julio App :)
 
 A simple Flutter application designed for accounting and tracking financial gains.
 
