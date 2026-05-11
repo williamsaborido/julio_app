@@ -95,8 +95,8 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
 
   /// Exibe um modal com o conteúdo fornecido pelo parâmetro [content],
   /// se [dismissible] for true, o modal pode ser fechado ao clicar fora dele
-  void showModal(Widget content, {bool dismissible = true}) {
-    showDialog(
+  Future<V?> showModal<V>(Widget content, {bool dismissible = true}) {
+    return showDialog<V>(
       context: context,
       barrierDismissible: dismissible,
       builder: (context){
@@ -104,7 +104,6 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          backgroundColor: Colors.white,
           child: content,
         );
       },
