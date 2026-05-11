@@ -13,10 +13,16 @@ class Controller extends ChangeNotifier {
     : _repository = repository;
 
   Future<void> getList() async {
+
+    changeState(ControllerState.loading);
+
     final lancamentos = await _repository.getList();
+    
     list.clear();
+    
     list.addAll(lancamentos);
-    notifyListeners();
+    
+    changeState(ControllerState.success);
   }
 
   Future<void> create(Lancamento? data) async {
