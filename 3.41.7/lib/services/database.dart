@@ -87,15 +87,15 @@ class Database {
 
   // --- Generic CRUD Operations ---
 
-  /// Inserts a map of data into the specified table.
-  /// Uses [ConflictAlgorithm.replace] by default.
+  /// Inserts a map of data into the specified table, always generating a new ID.
   Future<int> insert(String table, Map<String, dynamic> data) async {
     final client = await db;
-    return await client.insert(
-      table,
-      data,
-      conflictAlgorithm: sqflite.ConflictAlgorithm.replace,
-    );
+
+    // Criamos uma cópia e removemos o ID para garantir que o banco gere um novo via AUTOINCREMENT
+    final Map<String, dynamic> map = Map.from(data);
+    map.remove('id');
+
+    return await client.insert(table, map);
   }
 
   /// Queries data from the specified table.

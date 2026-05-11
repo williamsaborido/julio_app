@@ -29,19 +29,16 @@ class _HomeViewState extends BaseState<HomeView> {
   void initState() {
     super.initState();
     theme = context.read<SystemTheme>();
-    controller = Controller(
-      repository: LancamentoRepository(context.read()),
-    );
+    controller = Controller(repository: LancamentoRepository(context.read()));
   }
 
   @override
   void onInit() {
-      controller.getList();
+    controller.getList();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lançamentos'),
@@ -55,8 +52,7 @@ class _HomeViewState extends BaseState<HomeView> {
                   ThemeMode.light => Icons.light_mode,
                   ThemeMode.dark => Icons.dark_mode,
                   ThemeMode.system => Icons.brightness_auto,
-                }
-                ),
+                }),
               );
             },
           ),
@@ -70,27 +66,48 @@ class _HomeViewState extends BaseState<HomeView> {
               child: ListenableBuilder(
                 listenable: controller,
                 builder: (context, _) {
+
+                  if (controller.state == ControllerState.loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (controller.list.isEmpty) {
+                    return const Center(child: Text('Nenhum lançamento encontrado.\nAdicione um novo lançamento para começar.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)));
+                  }
+
                   return ListView(
                     children: List.generate(
                       controller.list.length,
                       (index) => AppCardAlt(
                         placa: controller.list[index].placa ?? '',
-                        data: _dateFormatter.format(controller.list[index].data),
+                        data: _dateFormatter.format(
+                          controller.list[index].data,
+                        ),
                         valor: _currencyFormatter.format(
                           controller.list[index].valor,
                         ),
-                        onDelete: () => controller.list.removeAt(index),
+                        cicloLabel: controller.list[index].ciclo.label,
+                        cicloColor: controller.list[index].ciclo.color,
+                        onDelete: () async {
+                          if (await confirm(
+                            'Deseja excluir este lançamento?',
+                          )) {
+                            controller.delete(controller.list[index].id);
+                          }
+                        },
                       ),
                     ),
                   );
-                }
+                },
               ),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showModal(const LancamentoCrud()),
+        onPressed: () async {
+          controller.create(await showModal(const LancamentoCrud()));
+        },
         icon: const Icon(Icons.add),
         label: const Text('Adicionar'),
       ),
