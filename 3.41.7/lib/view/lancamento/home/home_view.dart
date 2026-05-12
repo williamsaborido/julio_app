@@ -3,9 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:julio_app/components/app_card/app_card_alt.dart';
 import 'package:julio_app/core/base_state.dart';
 import 'package:julio_app/core/system_theme.dart';
-import 'package:julio_app/models/lancamento.dart';
+import 'package:julio_app/enums/controller_state.dart';
 import 'package:julio_app/services/lancamento_repository.dart';
-import 'package:julio_app/view/controller.dart';
+import 'package:julio_app/view/lancamento/home/home_controller.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -16,7 +16,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends BaseState<HomeView> {
-  late final Controller controller;
+  late final HomeController controller;
   late final SystemTheme theme;
 
   final _dateFormatter = DateFormat('dd/MM/yyyy');
@@ -29,7 +29,7 @@ class _HomeViewState extends BaseState<HomeView> {
   void initState() {
     super.initState();
     theme = context.read<SystemTheme>();
-    controller = Controller(repository: LancamentoRepository(context.read()));
+    controller = HomeController(repository: context.read());
   }
 
   @override
@@ -69,7 +69,7 @@ class _HomeViewState extends BaseState<HomeView> {
                   if (controller.state == ControllerState.loading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-
+      
                   if (controller.list.isEmpty) {
                     return const Center(
                       child: Text(
@@ -79,7 +79,7 @@ class _HomeViewState extends BaseState<HomeView> {
                       ),
                     );
                   }
-
+      
                   return ListView(
                     children: List.generate(
                       controller.list.length,
@@ -94,11 +94,9 @@ class _HomeViewState extends BaseState<HomeView> {
                         cicloLabel: controller.list[index].ciclo.label,
                         cicloColor: controller.list[index].ciclo.color,
                         onTap: () async {
-                          controller.update(
-                            await navigateToAndReturn<Lancamento?>(
-                              '/lancamento/crud',
-                              args: controller.list[index],
-                            ),
+                          await navigateToAndReturn(
+                            '/lancamento/crud',
+                            args: controller.list[index],
                           );
                         },
                         onDelete: () async {
@@ -119,11 +117,9 @@ class _HomeViewState extends BaseState<HomeView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          controller.create(
-            await navigateToAndReturn<Lancamento?>(
-              '/lancamento/crud',
-              args: null,
-            ),
+          await navigateToAndReturn(
+            '/lancamento/crud',
+            args: null,
           );
         },
         icon: const Icon(Icons.add),
