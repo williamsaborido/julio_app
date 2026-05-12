@@ -10,6 +10,7 @@ class AppInput extends StatefulWidget {
   final AppInputType type;
   final int? maxLength;
   final AppInputCasing? casing;
+  final String? initialValue;
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
   const AppInput({
@@ -19,6 +20,7 @@ class AppInput extends StatefulWidget {
     required this.type,
     this.maxLength,
     this.casing = AppInputCasing.none,
+    this.initialValue,
     this.validator,
     this.onChanged,
   });
@@ -38,7 +40,12 @@ class _AppInputState extends State<AppInput> {
   @override
   void initState() {
     super.initState();
+
     _controller.addListener(_onChangedHandler);
+    
+    if (widget.initialValue != null) {
+      _controller.text = widget.initialValue!;
+    }
   }
 
   @override

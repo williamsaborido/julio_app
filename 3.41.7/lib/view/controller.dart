@@ -13,42 +13,36 @@ class Controller extends ChangeNotifier {
     : _repository = repository;
 
   Future<void> getList() async {
-
     changeState(ControllerState.loading);
-
     final lancamentos = await _repository.getList();
-    
     list.clear();
-    
     list.addAll(lancamentos);
-    
     changeState(ControllerState.success);
   }
 
   Future<void> create(Lancamento? data) async {
-
     if (data == null) return;
-    
     changeState(ControllerState.saving);
-
     await _repository.create(data);
-
     changeState(ControllerState.loading);
-
     getList();
-
     changeState(ControllerState.success);
   }
 
-    Future<void> delete(int id) async {
-    changeState(ControllerState.deleting);
-
-    await _repository.delete(id);
-
+  Future<void> update(Lancamento? data) async {
+    if (data == null) return;
+    changeState(ControllerState.saving);
+    await _repository.update(data);
     changeState(ControllerState.loading);
-
     getList();
+    changeState(ControllerState.success);
+  }
 
+  Future<void> delete(int id) async {
+    changeState(ControllerState.deleting);
+    await _repository.delete(id);
+    changeState(ControllerState.loading);
+    getList();
     changeState(ControllerState.success);
   }
 

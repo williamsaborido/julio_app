@@ -3,9 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:julio_app/components/app_card/app_card_alt.dart';
 import 'package:julio_app/core/base_state.dart';
 import 'package:julio_app/core/system_theme.dart';
+import 'package:julio_app/models/lancamento.dart';
 import 'package:julio_app/services/lancamento_repository.dart';
 import 'package:julio_app/view/controller.dart';
-import 'package:julio_app/view/dialog/lancamento_crud.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -66,13 +66,18 @@ class _HomeViewState extends BaseState<HomeView> {
               child: ListenableBuilder(
                 listenable: controller,
                 builder: (context, _) {
-
                   if (controller.state == ControllerState.loading) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
                   if (controller.list.isEmpty) {
-                    return const Center(child: Text('Nenhum lançamento encontrado.\nAdicione um novo lançamento para começar.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)));
+                    return const Center(
+                      child: Text(
+                        'Nenhum lançamento encontrado.\nAdicione um novo lançamento para começar.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    );
                   }
 
                   return ListView(
@@ -88,6 +93,14 @@ class _HomeViewState extends BaseState<HomeView> {
                         ),
                         cicloLabel: controller.list[index].ciclo.label,
                         cicloColor: controller.list[index].ciclo.color,
+                        onTap: () async {
+                          controller.update(
+                            await navigateToAndReturn<Lancamento?>(
+                              '/lancamento/crud',
+                              args: controller.list[index],
+                            ),
+                          );
+                        },
                         onDelete: () async {
                           if (await confirm(
                             'Deseja excluir este lançamento?',
@@ -106,7 +119,12 @@ class _HomeViewState extends BaseState<HomeView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          controller.create(await showModal(const LancamentoCrud()));
+          controller.create(
+            await navigateToAndReturn<Lancamento?>(
+              '/lancamento/crud',
+              args: null,
+            ),
+          );
         },
         icon: const Icon(Icons.add),
         label: const Text('Adicionar'),

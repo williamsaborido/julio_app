@@ -29,12 +29,12 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   }
 
   /// Navega para uma nova tela (adiciona widget da rota no topo da pilha de navegação) e retorna um objeto result
-  Future<Object?> navigateToAndReturn(String route, {Object? args}) {
+  Future<V?> navigateToAndReturn<V>(String route, {Object? args}) {
     if (mounted) {
-      return Navigator.of(context).pushNamed(route, arguments: args);
+      return Navigator.of(context).pushNamed<V>(route, arguments: args);
     }
 
-    return Future.value();
+    return Future.value(null);
   }
 
   /// "Navega de volta", removendo a rota, ou widget atual, da pilha de navegação, 
