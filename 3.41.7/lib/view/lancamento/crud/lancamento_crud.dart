@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:julio_app/components/app_input/app_input.dart';
+import 'package:julio_app/components/app_currency_input/app_currency_input.dart';
+import 'package:julio_app/components/app_date_input/app_date_input.dart';
+import 'package:julio_app/components/app_text_input/app_text_input.dart';
+import 'package:julio_app/components/app_time_input/app_time_input.dart';
 import 'package:julio_app/core/base_state.dart';
 import 'package:julio_app/core/extensions.dart';
 import 'package:julio_app/enums/app_input_casing.dart';
-import 'package:julio_app/enums/app_input_type.dart';
 import 'package:julio_app/enums/lancamento_ciclo.dart';
 import 'package:julio_app/models/lancamento.dart';
 import 'package:julio_app/view/lancamento/crud/crud_controller.dart';
@@ -23,7 +25,9 @@ class _LancamentoCrudState extends BaseState<LancamentoCrud> {
   DateTime selectedDate = DateTime.now();
   String placa = '';
   double valor = 0.0;
-  int ciclo = 1;
+  double? valorHoraExtra;
+  TimeOfDay? horaInicial;
+  TimeOfDay? horaFinal;
   int id = 0;
 
   @override
@@ -42,7 +46,9 @@ class _LancamentoCrudState extends BaseState<LancamentoCrud> {
         selectedDate = data.data;
         placa = data.placa ?? '';
         valor = data.valor;
-        ciclo = data.ciclo.value;
+        valorHoraExtra = data.valorHoraExtra;
+        horaInicial = data.horaInicial;
+        horaFinal = data.horaFinal;
         id = data.id;
       });
     }
@@ -55,6 +61,9 @@ class _LancamentoCrudState extends BaseState<LancamentoCrud> {
         data: selectedDate,
         placa: placa,
         valor: valor,
+        valorHoraExtra: valorHoraExtra,
+        horaInicial: horaInicial,
+        horaFinal: horaFinal,
         ciclo: LancamentoCiclo.fromDate(selectedDate),
       );
 
@@ -84,26 +93,19 @@ class _LancamentoCrudState extends BaseState<LancamentoCrud> {
               mainAxisSize: MainAxisSize.min,
               spacing: 16.0,
               children: [
-                AppInput(
+                AppDateInput(
                   label: 'Data',
                   icon: Icons.calendar_month,
-                  type: AppInputType.date,
-                  initialValue: selectedDate.toBrString(),
+                  initialValue: selectedDate,
                   onChanged: (value) {
-                    selectedDate = value.toDate() ?? DateTime.now();
+                    if (value != null) selectedDate = value;
                   },
-                  validator: (value) {
-                    if (value == null || !value.isDate()) {
-                      return 'Data inválida';
-                    }
-                    return null;
-                  },
+                  validator: (value) => value == null ? 'Data inválida' : null,
                 ),
-                AppInput(
+                AppTextInput(
                   label: 'Placa',
                   icon: Icons.directions_car,
                   maxLength: 20,
-                  type: AppInputType.text,
                   initialValue: placa,
                   casing: AppInputCasing.uppercase,
                   onChanged: (value) {
@@ -116,83 +118,59 @@ class _LancamentoCrudState extends BaseState<LancamentoCrud> {
                     return null;
                   },
                 ),
-                AppInput(
+                AppCurrencyInput(
                   label: 'Valor',
                   icon: Icons.payments_outlined,
-                  type: AppInputType.currency,
-                  initialValue: valor != 0.0 ? valor.toBrCurrency() : null,
+                  initialValue: valor,
                   onChanged: (value) {
-                    valor = value.toCurrency() ?? 0.0;
+                    valor = value;
                   },
                   validator: (value) {
-                    if (value == null ||
-                        value.toCurrency() == null ||
-                        value.toCurrency() == 0.0) {
+                    final amount = value?.toCurrency();
+                    if (amount == null || amount == 0.0) {
                       return 'Valor inválido';
                     }
                     return null;
                   },
                 ),
                 ExpansionTile(
-                  collapsedBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                  collapsedBackgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
                   title: Text('Hora Extra'),
-                  initiallyExpanded: false,
+                  initiallyExpanded: valorHoraExtra != null,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16),
-                      child: AppInput(
-                        label: 'Data',
-                        icon: Icons.calendar_month,
-                        type: AppInputType.date,
-                        initialValue: selectedDate.toBrString(),
-                        onChanged: (value) {
-                          selectedDate = value.toDate() ?? DateTime.now();
-                        },
-                        validator: (value) {
-                          if (value == null || !value.isDate()) {
-                            return 'Data inválida';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: AppInput(
-                        label: 'Data',
-                        icon: Icons.calendar_month,
-                        type: AppInputType.date,
-                        initialValue: selectedDate.toBrString(),
-                        onChanged: (value) {
-                          selectedDate = value.toDate() ?? DateTime.now();
-                        },
-                        validator: (value) {
-                          if (value == null || !value.isDate()) {
-                            return 'Data inválida';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: AppInput(
-                        label: 'Valor',
-                        icon: Icons.payments_outlined,
-                        type: AppInputType.currency,
-                        initialValue: valor != 0.0 ? valor.toBrCurrency() : null,
-                        onChanged: (value) {
-                          valor = value.toCurrency() ?? 0.0;
-                        },
-                        validator: (value) {
-                          if (value == null ||
-                              value.toCurrency() == null ||
-                              value.toCurrency() == 0.0) {
-                            return 'Valor inválido';
-                          }
-                          return null;
-                        },
+                      child: Column(
+                        spacing: 16.0,
+                        children: [
+                          AppTimeInput(
+                            label: 'Hora Inicial',
+                            icon: Icons.access_time,
+                            initialValue: horaInicial,
+                            onChanged: (value) {
+                              horaInicial = value;
+                            },
+                          ),
+                          AppTimeInput(
+                            label: 'Hora Final',
+                            icon: Icons.access_time_filled,
+                            initialValue: horaFinal,
+                            onChanged: (value) {
+                              horaFinal = value;
+                            },
+                          ),
+                          AppCurrencyInput(
+                            label: 'Valor da Hora Extra',
+                            icon: Icons.price_change_outlined,
+                            initialValue: valorHoraExtra,
+                            onChanged: (value) {
+                              valorHoraExtra = value;
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -217,22 +195,7 @@ class _LancamentoCrudState extends BaseState<LancamentoCrud> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState?.validate() ?? false) {
-                            if (context.mounted) {
-                              Navigator.pop(
-                                context,
-                                Lancamento(
-                                  id: id,
-                                  data: selectedDate,
-                                  placa: placa,
-                                  valor: valor,
-                                  ciclo: LancamentoCiclo.fromDate(selectedDate),
-                                ),
-                              );
-                            }
-                          }
-                        },
+                        onPressed: onSave,
                         child: Text('SALVAR'),
                       ),
                     ),

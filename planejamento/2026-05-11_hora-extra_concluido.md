@@ -52,3 +52,6 @@ Incluir campos opcionais para controle de horas extras no modelo `Lancamento` e 
 - Validar se a migração ocorre sem erros ao abrir o banco.
 - Testar a inserção de um lançamento com e sem os novos campos.
 - Validar se o cálculo de `minutosExtra` está correto para intervalos no mesmo dia.
+
+## Status
+- [x] Concluído
