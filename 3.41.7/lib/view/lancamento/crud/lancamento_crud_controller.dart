@@ -7,7 +7,7 @@ import 'package:julio_app/services/lancamento_repository.dart';
 
 class LancamentoCrudController extends ChangeNotifier {
   final LancamentoRepository _repository;
-  ControllerState state = ControllerState.loading;
+  ControllerState state = ControllerState.success;
   late final Lancamento? lancamento;
 
   DateTime selectedDate = DateTime.now();

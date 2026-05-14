@@ -4,6 +4,7 @@ import 'package:julio_app/components/app_card/app_card_alt.dart';
 import 'package:julio_app/core/base_state.dart';
 import 'package:julio_app/core/system_theme.dart';
 import 'package:julio_app/enums/controller_state.dart';
+import 'package:julio_app/view/config/config_view.dart';
 import 'package:julio_app/view/lancamento/home/lancamento_home_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -36,8 +37,8 @@ class _LancamentoHomeViewState extends BaseState<LancamentoHomeView> {
     controller.getList();
   }
 
-  void _toggleTheme() {
-    theme.toggleTheme();
+  void _openSettings() {
+    showModal(const ConfigView());
   }
 
   Future<void> _navigateToCrud([int? id]) async {
@@ -53,18 +54,9 @@ class _LancamentoHomeViewState extends BaseState<LancamentoHomeView> {
       appBar: AppBar(
         title: const Text('Lançamentos'),
         actions: [
-          ListenableBuilder(
-            listenable: context.watch<SystemTheme>(),
-            builder: (context, _) {
-              return IconButton(
-                onPressed: _toggleTheme,
-                icon: Icon(switch (theme.theme) {
-                  ThemeMode.light => Icons.light_mode,
-                  ThemeMode.dark => Icons.dark_mode,
-                  ThemeMode.system => Icons.brightness_auto,
-                }),
-              );
-            },
+          IconButton(
+            onPressed: _openSettings,
+            icon: const Icon(Icons.settings),
           ),
         ],
       ),

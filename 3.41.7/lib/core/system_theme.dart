@@ -16,4 +16,11 @@ class SystemTheme extends ChangeNotifier {
 
       notifyListeners();
   } 
+
+  void setTheme(ThemeMode mode) {
+    if (theme != mode) {
+      theme = mode;
+      notifyListeners();
+    }
+  }
 }
