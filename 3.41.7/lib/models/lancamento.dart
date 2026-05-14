@@ -14,6 +14,9 @@ final class Lancamento extends Table {
   final TimeOfDay? horaInicial;
   final TimeOfDay? horaFinal;
 
+  bool get hasHoraExtra => horaInicial != null;
+  double get total => valor + (valorHoraExtra ?? 0.0);
+
   Lancamento({
     required super.id,
     required this.data,
@@ -33,12 +36,15 @@ final class Lancamento extends Table {
       'ciclo': ciclo.value,
       'valor': (valor * 100).round(), // Armazena em centavos (int)
       'placa': placa,
-      'valorHoraExtra':
-          valorHoraExtra != null ? (valorHoraExtra! * 100).round() : null,
-      'horaInicial':
-          horaInicial != null ? (horaInicial!.hour * 60 + horaInicial!.minute) : null,
-      'horaFinal':
-          horaFinal != null ? (horaFinal!.hour * 60 + horaFinal!.minute) : null,
+      'valorHoraExtra': valorHoraExtra != null
+          ? (valorHoraExtra! * 100).round()
+          : null,
+      'horaInicial': horaInicial != null
+          ? (horaInicial!.hour * 60 + horaInicial!.minute)
+          : null,
+      'horaFinal': horaFinal != null
+          ? (horaFinal!.hour * 60 + horaFinal!.minute)
+          : null,
     };
   }
 

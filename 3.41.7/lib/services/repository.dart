@@ -58,4 +58,6 @@ abstract base class Repository<T extends Table> {
       whereArgs: [data.id],
     );
   }
+
+  
 }

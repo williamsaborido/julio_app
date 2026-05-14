@@ -3,12 +3,12 @@ import 'package:julio_app/enums/controller_state.dart';
 import 'package:julio_app/models/lancamento.dart';
 import 'package:julio_app/services/lancamento_repository.dart';
 
-class HomeController extends ChangeNotifier {
+class LancamentoHomeController extends ChangeNotifier {
   final LancamentoRepository _repository;
   ControllerState state = ControllerState.loading;
   final list = List<Lancamento>.empty(growable: true);
 
-  HomeController({required LancamentoRepository repository})
+  LancamentoHomeController({required LancamentoRepository repository})
     : _repository = repository;
 
   Future<void> getList() async {

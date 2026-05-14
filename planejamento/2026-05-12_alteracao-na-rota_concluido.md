@@ -66,6 +66,6 @@ routes: {
 - Como estamos usando um `Navigator` aninhado, será necessário envolver o `Navigator` do `LancamentoBind` em um `PopScope` caso deseje que o botão "voltar" do sistema (Android) navegue entre as telas internas antes de sair do módulo/app.
 
 ## Status
-- [ ] Implementar alteração no `LancamentoBind`.
-- [ ] Simplificar `main.dart`.
-- [ ] Validar injeção de dependência no CRUD.
+- [x] Implementar alteração no `LancamentoBind`.
+- [x] Simplificar `main.dart`.
+- [x] Validar injeção de dependência no CRUD.

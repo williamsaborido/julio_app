@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:julio_app/core/system_theme.dart';
 import 'package:julio_app/services/database.dart';
-import 'package:julio_app/view/lancamento/crud/lancamento_crud.dart';
 import 'package:julio_app/view/lancamento/lancamento_bind.dart';
 import 'package:provider/provider.dart';
 
@@ -28,10 +27,9 @@ class MyApp extends StatelessWidget {
             darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark),
             ),
-            initialRoute: '/home',            
+            initialRoute: '/lancamentos',            
             routes: {
-              '/home': (_) => const LancamentoBind(),
-              '/lancamento/crud': (_) => const LancamentoCrud(),
+              '/lancamentos': (_) => const LancamentoBind(),
             },
           );
         }

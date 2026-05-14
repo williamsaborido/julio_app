@@ -4,19 +4,18 @@ import 'package:julio_app/components/app_card/app_card_alt.dart';
 import 'package:julio_app/core/base_state.dart';
 import 'package:julio_app/core/system_theme.dart';
 import 'package:julio_app/enums/controller_state.dart';
-import 'package:julio_app/services/lancamento_repository.dart';
-import 'package:julio_app/view/lancamento/home/home_controller.dart';
+import 'package:julio_app/view/lancamento/home/lancamento_home_controller.dart';
 import 'package:provider/provider.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class LancamentoHomeView extends StatefulWidget {
+  const LancamentoHomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<LancamentoHomeView> createState() => _LancamentoHomeViewState();
 }
 
-class _HomeViewState extends BaseState<HomeView> {
-  late final HomeController controller;
+class _LancamentoHomeViewState extends BaseState<LancamentoHomeView> {
+  late final LancamentoHomeController controller;
   late final SystemTheme theme;
 
   final _dateFormatter = DateFormat('dd/MM/yyyy');
@@ -29,12 +28,23 @@ class _HomeViewState extends BaseState<HomeView> {
   void initState() {
     super.initState();
     theme = context.read<SystemTheme>();
-    controller = HomeController(repository: context.read());
+    controller = LancamentoHomeController(repository: context.read());
   }
 
   @override
   void onInit() {
     controller.getList();
+  }
+
+  void _toggleTheme() {
+    theme.toggleTheme();
+  }
+
+  Future<void> _navigateToCrud([int? id]) async {
+    final result = await navigateToAndReturn('/crud', args: id);
+    if (result == true) {
+      controller.getList();
+    }
   }
 
   @override
@@ -69,7 +79,7 @@ class _HomeViewState extends BaseState<HomeView> {
                   if (controller.state == ControllerState.loading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-      
+
                   if (controller.list.isEmpty) {
                     return const Center(
                       child: Text(
@@ -79,7 +89,7 @@ class _HomeViewState extends BaseState<HomeView> {
                       ),
                     );
                   }
-      
+
                   return ListView(
                     children: List.generate(
                       controller.list.length,
@@ -89,15 +99,12 @@ class _HomeViewState extends BaseState<HomeView> {
                           controller.list[index].data,
                         ),
                         valor: _currencyFormatter.format(
-                          controller.list[index].valor,
+                          controller.list[index].total,
                         ),
                         cicloLabel: controller.list[index].ciclo.label,
                         cicloColor: controller.list[index].ciclo.color,
                         onTap: () async {
-                          await navigateToAndReturn(
-                            '/lancamento/crud',
-                            args: controller.list[index],
-                          );
+                          await _navigateToCrud(controller.list[index].id);
                         },
                         onDelete: () async {
                           if (await confirm(
@@ -116,19 +123,10 @@ class _HomeViewState extends BaseState<HomeView> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await navigateToAndReturn(
-            '/lancamento/crud',
-            args: null,
-          );
-        },
+        onPressed: () async =>await _navigateToCrud(),
         icon: const Icon(Icons.add),
         label: const Text('Adicionar'),
       ),
     );
-  }
-
-  void _toggleTheme() {
-    theme.toggleTheme();
   }
 }
