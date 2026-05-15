@@ -21,7 +21,7 @@ class Database {
 
     return await sqflite.openDatabase(
       path,
-      version: 1, // Increment this when changing the schema
+      version: 2, // Increment this when changing the schema
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -29,14 +29,17 @@ class Database {
 
   /// Initial database creation
   Future<void> _onCreate(sqflite.Database db, int version) async {
-    // Version 1 Schema
+    // Version 2 Schema (Includes fields from version 1)
     await db.execute('''
       CREATE TABLE lancamento (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         data INTEGER NOT NULL,
         ciclo INTEGER NOT NULL,
         valor INTEGER NOT NULL,
-        placa TEXT CHECK(length(placa) <= 20)
+        placa TEXT CHECK(length(placa) <= 20),
+        valorHoraExtra INTEGER,
+        horaInicial INTEGER,
+        horaFinal INTEGER
       )
     ''');
   }
@@ -51,10 +54,11 @@ class Database {
   /// Run specific migration logic for a given version
   Future<void> _runMigration(sqflite.Database db, int version) async {
     switch (version) {
-      // Example migration for version 2:
-      // case 2:
-      //   await db.execute('ALTER TABLE lancamento ADD COLUMN observacao TEXT');
-      //   break;
+      case 2:
+        await db.execute('ALTER TABLE lancamento ADD COLUMN valorHoraExtra INTEGER');
+        await db.execute('ALTER TABLE lancamento ADD COLUMN horaInicial INTEGER');
+        await db.execute('ALTER TABLE lancamento ADD COLUMN horaFinal INTEGER');
+        break;
     }
   }
 

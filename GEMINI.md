@@ -49,5 +49,6 @@ Commands should be executed within the `3.41.7` directory.
 ## Development Conventions
 
 - **Monetary Values:** Always store as integers (cents) in the DB. Convert to/from double in the model's mapping logic.
+- **Time Representation:** Store "time of day" as integers (total minutes from midnight, 0-1439) in the DB. Use `TimeOfDay` in the Flutter model for UI compatibility.
 - **Schema Safety:** Use `CHECK` constraints in the database (e.g., limiting string lengths) and validate data at the model level.
 - **Code Style:** Follow Dart's `lowerCamelCase` for methods and variables. Use `base`, `final`, or `sealed` modifiers for class hierarchies as per Dart 3 standards.

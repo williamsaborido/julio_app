@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:julio_app/components/app_card/app_card_alt.dart';
 import 'package:julio_app/core/base_state.dart';
-import 'package:julio_app/core/system_theme.dart';
-import 'package:julio_app/services/lancamento_repository.dart';
-import 'package:julio_app/view/controller.dart';
-import 'package:julio_app/view/dialog/lancamento_crud.dart';
+import 'package:julio_app/enums/controller_state.dart';
+import 'package:julio_app/view/config/config_view.dart';
+import 'package:julio_app/view/lancamento/home/lancamento_home_controller.dart';
 import 'package:provider/provider.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class LancamentoHomeView extends StatefulWidget {
+  const LancamentoHomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<LancamentoHomeView> createState() => _LancamentoHomeViewState();
 }
 
-class _HomeViewState extends BaseState<HomeView> {
-  late final Controller controller;
-  late final SystemTheme theme;
+class _LancamentoHomeViewState extends BaseState<LancamentoHomeView> {
+  late final LancamentoHomeController controller;
 
   final _dateFormatter = DateFormat('dd/MM/yyyy');
   final _currencyFormatter = NumberFormat.currency(
@@ -28,13 +26,23 @@ class _HomeViewState extends BaseState<HomeView> {
   @override
   void initState() {
     super.initState();
-    theme = context.read<SystemTheme>();
-    controller = Controller(repository: LancamentoRepository(context.read()));
+    controller = LancamentoHomeController(repository: context.read());
   }
 
   @override
   void onInit() {
     controller.getList();
+  }
+
+  void _openSettings() {
+    showModal(const ConfigView(), dismissible: false);
+  }
+
+  Future<void> _navigateToCrud([int? id]) async {
+    final result = await navigateTo('/crud', args: id);
+    if (result == true) {
+      controller.getList();
+    }
   }
 
   @override
@@ -43,18 +51,9 @@ class _HomeViewState extends BaseState<HomeView> {
       appBar: AppBar(
         title: const Text('Lançamentos'),
         actions: [
-          ListenableBuilder(
-            listenable: context.watch<SystemTheme>(),
-            builder: (context, _) {
-              return IconButton(
-                onPressed: _toggleTheme,
-                icon: Icon(switch (theme.theme) {
-                  ThemeMode.light => Icons.light_mode,
-                  ThemeMode.dark => Icons.dark_mode,
-                  ThemeMode.system => Icons.brightness_auto,
-                }),
-              );
-            },
+          IconButton(
+            onPressed: _openSettings,
+            icon: const Icon(Icons.settings),
           ),
         ],
       ),
@@ -66,13 +65,18 @@ class _HomeViewState extends BaseState<HomeView> {
               child: ListenableBuilder(
                 listenable: controller,
                 builder: (context, _) {
-
                   if (controller.state == ControllerState.loading) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
                   if (controller.list.isEmpty) {
-                    return const Center(child: Text('Nenhum lançamento encontrado.\nAdicione um novo lançamento para começar.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)));
+                    return const Center(
+                      child: Text(
+                        'Nenhum lançamento encontrado.\nAdicione um novo lançamento para começar.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    );
                   }
 
                   return ListView(
@@ -84,10 +88,13 @@ class _HomeViewState extends BaseState<HomeView> {
                           controller.list[index].data,
                         ),
                         valor: _currencyFormatter.format(
-                          controller.list[index].valor,
+                          controller.list[index].total,
                         ),
                         cicloLabel: controller.list[index].ciclo.label,
                         cicloColor: controller.list[index].ciclo.color,
+                        onTap: () async {
+                          await _navigateToCrud(controller.list[index].id);
+                        },
                         onDelete: () async {
                           if (await confirm(
                             'Deseja excluir este lançamento?',
@@ -105,16 +112,10 @@ class _HomeViewState extends BaseState<HomeView> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          controller.create(await showModal(const LancamentoCrud()));
-        },
+        onPressed: () async =>await _navigateToCrud(),
         icon: const Icon(Icons.add),
         label: const Text('Adicionar'),
       ),
     );
-  }
-
-  void _toggleTheme() {
-    theme.toggleTheme();
   }
 }
