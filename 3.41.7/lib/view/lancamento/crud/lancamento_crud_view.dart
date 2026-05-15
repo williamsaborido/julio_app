@@ -10,7 +10,6 @@ import 'package:julio_app/view/lancamento/crud/lancamento_crud_controller.dart';
 import 'package:provider/provider.dart';
 
 class LancamentoCrudView extends StatefulWidget {
-  
   const LancamentoCrudView({super.key});
 
   @override
@@ -23,7 +22,10 @@ class _LancamentoCrudViewState extends BaseState<LancamentoCrudView> {
 
   @override
   void initState() {
-    controller = LancamentoCrudController(repository: context.read());
+    controller = LancamentoCrudController(
+      repository: context.read(),
+      config: context.read(),
+    );
     super.initState();
   }
 
@@ -32,11 +34,19 @@ class _LancamentoCrudViewState extends BaseState<LancamentoCrudView> {
     if (ModalRoute.of(context)?.settings.arguments != null) {
       await controller.get(ModalRoute.of(context)!.settings.arguments as int);
     }
+    else {
+      controller.changeState(ControllerState.success);
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.valorHoraExtraController.dispose();
+    super.dispose();
   }
 
   void onSave() {
     if (formKey.currentState?.validate() ?? false) {
-
       if (controller.id == 0) {
         controller.create();
       } else {
@@ -51,7 +61,18 @@ class _LancamentoCrudViewState extends BaseState<LancamentoCrudView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.id == 0 ? 'Adicionar Lançamento' : 'Editar Lançamento'),
+        title: ListenableBuilder(
+          listenable: controller,
+          builder: (context, _) {
+            return Text(
+              controller.state == ControllerState.loading
+                  ? 'Carregando...'
+                  : (controller.id == 0
+                        ? 'Adicionar Lançamento'
+                        : 'Editar Lançamento'),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -66,6 +87,8 @@ class _LancamentoCrudViewState extends BaseState<LancamentoCrudView> {
               return const Center(child: Text('Erro ao carregar dados'));
             }
 
+            debugPrint('Rebuild LancamentoCrudView');
+
             return Form(
               key: formKey,
               child: SingleChildScrollView(
@@ -78,7 +101,8 @@ class _LancamentoCrudViewState extends BaseState<LancamentoCrudView> {
                       label: 'Data',
                       icon: Icons.calendar_month,
                       initialValue: controller.selectedDate,
-                      onChanged: (value) => controller.selectedDate = value ?? DateTime.now(),                      
+                      onChanged: (value) =>
+                          controller.selectedDate = value ?? DateTime.now(),
                       validator: controller.validateData,
                     ),
                     AppTextInput(
@@ -100,11 +124,16 @@ class _LancamentoCrudViewState extends BaseState<LancamentoCrudView> {
                     LancamentoHoraExtraForm(
                       horaInicial: controller.horaInicial,
                       horaFinal: controller.horaFinal,
-                      valorHoraExtra: controller.valorHoraExtra,
-                      onHasHoraExtraChanged: (value) => controller.hasHoraExtra = value ?? false,
-                      onHoraInicialChanged: (value) => controller.horaInicial = value,
-                      onHoraFinalChanged: (value) => controller.horaFinal = value,
-                      onValorHoraExtraChanged: (value) => controller.valorHoraExtra = value,                      
+                      controllerValorHoraExtra:
+                          controller.valorHoraExtraController,
+                      onHasHoraExtraChanged: (value) =>
+                          controller.hasHoraExtra = value ?? false,
+                      onHoraInicialChanged: (value) =>
+                          controller.horaInicial = value,
+                      onHoraFinalChanged: (value) =>
+                          controller.horaFinal = value,
+                      onValorHoraExtraChanged: (value) =>
+                          controller.valorHoraExtra = value,
                     ),
                     Card(
                       child: Padding(

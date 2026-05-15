@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:julio_app/core/extensions.dart';
+import 'package:provider/provider.dart';
 
 class AppDateInput extends StatefulWidget {
   final String label;
   final IconData icon;
+  final TextEditingController? controller;
   final DateTime? initialValue;
   final String? Function(String?)? validator;
   final ValueChanged<DateTime?>? onChanged;
@@ -12,6 +14,7 @@ class AppDateInput extends StatefulWidget {
     super.key,
     required this.label,
     required this.icon,
+    this.controller,
     this.initialValue,
     this.validator,
     this.onChanged,
@@ -29,14 +32,16 @@ class _AppDateInputState extends State<AppDateInput> {
   void initState() {
     super.initState();
     _selectedDate = widget.initialValue;
-    _controller = TextEditingController(
-      text: _selectedDate?.toBrString() ?? '',
-    );
+    _controller =
+        widget.controller ??
+        TextEditingController(text: _selectedDate?.toBrString() ?? '');
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 

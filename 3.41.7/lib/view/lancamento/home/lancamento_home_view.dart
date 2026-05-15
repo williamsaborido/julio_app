@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:julio_app/components/app_card/app_card_alt.dart';
 import 'package:julio_app/core/base_state.dart';
-import 'package:julio_app/core/system_theme.dart';
 import 'package:julio_app/enums/controller_state.dart';
 import 'package:julio_app/view/config/config_view.dart';
 import 'package:julio_app/view/lancamento/home/lancamento_home_controller.dart';
@@ -17,7 +16,6 @@ class LancamentoHomeView extends StatefulWidget {
 
 class _LancamentoHomeViewState extends BaseState<LancamentoHomeView> {
   late final LancamentoHomeController controller;
-  late final SystemTheme theme;
 
   final _dateFormatter = DateFormat('dd/MM/yyyy');
   final _currencyFormatter = NumberFormat.currency(
@@ -28,7 +26,6 @@ class _LancamentoHomeViewState extends BaseState<LancamentoHomeView> {
   @override
   void initState() {
     super.initState();
-    theme = context.read<SystemTheme>();
     controller = LancamentoHomeController(repository: context.read());
   }
 
@@ -38,11 +35,11 @@ class _LancamentoHomeViewState extends BaseState<LancamentoHomeView> {
   }
 
   void _openSettings() {
-    showModal(const ConfigView());
+    showModal(const ConfigView(), dismissible: false);
   }
 
   Future<void> _navigateToCrud([int? id]) async {
-    final result = await navigateToAndReturn('/crud', args: id);
+    final result = await navigateTo('/crud', args: id);
     if (result == true) {
       controller.getList();
     }

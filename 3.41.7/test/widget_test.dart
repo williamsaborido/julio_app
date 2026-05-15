@@ -7,13 +7,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:julio_app/services/configuration.dart';
 
 import 'package:julio_app/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    final config = Configuration();
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(config: config));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

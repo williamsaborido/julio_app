@@ -6,6 +6,7 @@ import 'package:julio_app/enums/app_input_casing.dart';
 class AppTextInput extends StatefulWidget {
   final String label;
   final IconData icon;
+  final TextEditingController? controller;
   final int? maxLength;
   final AppInputCasing casing;
   final String? initialValue;
@@ -16,6 +17,7 @@ class AppTextInput extends StatefulWidget {
     super.key,
     required this.label,
     required this.icon,
+    this.controller,
     this.maxLength,
     this.casing = AppInputCasing.none,
     this.initialValue,
@@ -33,12 +35,14 @@ class _AppTextInputState extends State<AppTextInput> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue);
+    _controller = widget.controller ?? TextEditingController(text: widget.initialValue);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 

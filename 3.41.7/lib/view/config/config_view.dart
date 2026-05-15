@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:julio_app/components/app_currency_input/app_currency_input.dart';
 import 'package:julio_app/core/base_state.dart';
-import 'package:julio_app/core/system_theme.dart';
+import 'package:julio_app/services/configuration.dart';
 import 'package:provider/provider.dart';
 
 class ConfigView extends StatefulWidget {
@@ -12,16 +12,19 @@ class ConfigView extends StatefulWidget {
 }
 
 class _ConfigViewState extends BaseState<ConfigView> {
-  late final SystemTheme _systemTheme;
-  double _valorHoraExtra = 0.0;
+  late final Configuration _configuration;
+
+  double valorHoraExtra = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _systemTheme = context.read<SystemTheme>();
+    _configuration = context.read<Configuration>();
+    valorHoraExtra = _configuration.valorHoraExtra;
   }
 
   void _onClose() {
+    _configuration.setValorHoraExtra(valorHoraExtra);
     Navigator.pop(context);
   }
 
@@ -44,27 +47,27 @@ class _ConfigViewState extends BaseState<ConfigView> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           ListenableBuilder(
-            listenable: _systemTheme,
+            listenable: _configuration,
             builder: (context, _) {
               return Column(
                 children: [
                   RadioListTile<ThemeMode>(
                     title: const Text('Claro'),
                     value: ThemeMode.light,
-                    groupValue: _systemTheme.theme,
-                    onChanged: (value) => _systemTheme.setTheme(value!),
+                    groupValue: _configuration.theme,
+                    onChanged: (value) => _configuration.setTheme(value!),
                   ),
                   RadioListTile<ThemeMode>(
                     title: const Text('Escuro'),
                     value: ThemeMode.dark,
-                    groupValue: _systemTheme.theme,
-                    onChanged: (value) => _systemTheme.setTheme(value!),
+                    groupValue: _configuration.theme,
+                    onChanged: (value) => _configuration.setTheme(value!),
                   ),
                   RadioListTile<ThemeMode>(
                     title: const Text('Sistema'),
                     value: ThemeMode.system,
-                    groupValue: _systemTheme.theme,
-                    onChanged: (value) => _systemTheme.setTheme(value!),
+                    groupValue: _configuration.theme,
+                    onChanged: (value) => _configuration.setTheme(value!),
                   ),
                 ],
               );
@@ -78,8 +81,8 @@ class _ConfigViewState extends BaseState<ConfigView> {
           AppCurrencyInput(
             label: 'Valor',
             icon: Icons.monetization_on_outlined,
-            initialValue: _valorHoraExtra,
-            onChanged: (value) => _valorHoraExtra = value,
+            initialValue: valorHoraExtra,
+            onChanged: (value) => valorHoraExtra = value,
           ),
           const SizedBox(height: 8),
           Row(

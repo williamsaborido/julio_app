@@ -7,6 +7,9 @@ class LancamentoHoraExtraForm extends StatefulWidget {
   final TimeOfDay? horaInicial;
   final TimeOfDay? horaFinal;
   final double? valorHoraExtra;
+  final TextEditingController? controllerHoraInicial;
+  final TextEditingController? controllerHoraFinal;
+  final TextEditingController? controllerValorHoraExtra;
   final ValueChanged<TimeOfDay?>? onHoraInicialChanged;
   final ValueChanged<TimeOfDay?>? onHoraFinalChanged;
   final ValueChanged<double?>? onValorHoraExtraChanged;
@@ -16,6 +19,9 @@ class LancamentoHoraExtraForm extends StatefulWidget {
     this.horaInicial,
     this.horaFinal,
     this.valorHoraExtra,
+    this.controllerHoraInicial,
+    this.controllerHoraFinal,
+    this.controllerValorHoraExtra,
     this.onHoraInicialChanged,
     this.onHoraFinalChanged,
     this.onValorHoraExtraChanged,
@@ -91,21 +97,24 @@ class _LancamentoHoraExtraFormState extends State<LancamentoHoraExtraForm> {
               AppTimeInput(
                 label: 'Hora Inicial',
                 icon: Icons.access_time,
-                initialValue: widget.horaInicial,
+                controller: widget.controllerHoraInicial,
+                initialValue: widget.controllerHoraInicial == null ? widget.horaInicial : null,
                 onChanged: widget.onHoraInicialChanged,
                 validator: validateHora,
               ),
               AppTimeInput(
                 label: 'Hora Final',
                 icon: Icons.access_time_filled,
-                initialValue: widget.horaFinal,
+                controller: widget.controllerHoraFinal,
+                initialValue: widget.controllerHoraFinal == null ? widget.horaFinal : null,
                 onChanged: widget.onHoraFinalChanged,
                 validator: validateHora,
               ),
               AppCurrencyInput(
                 label: 'Valor da Hora Extra',
                 icon: Icons.price_change_outlined,
-                initialValue: widget.valorHoraExtra,
+                controller: widget.controllerValorHoraExtra,
+                initialValue: widget.controllerValorHoraExtra == null ? widget.valorHoraExtra : null,
                 onChanged: widget.onValorHoraExtraChanged,
                 validator: validateValor,
               ),

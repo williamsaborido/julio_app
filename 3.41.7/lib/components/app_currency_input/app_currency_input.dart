@@ -5,6 +5,7 @@ import 'package:julio_app/core/extensions.dart';
 class AppCurrencyInput extends StatefulWidget {
   final String label;
   final IconData icon;
+  final TextEditingController? controller;
   final double? initialValue;
   final String? Function(String?)? validator;
   final ValueChanged<double>? onChanged;
@@ -13,6 +14,7 @@ class AppCurrencyInput extends StatefulWidget {
     super.key,
     required this.label,
     required this.icon,
+    this.controller,
     this.initialValue,
     this.validator,
     this.onChanged,
@@ -24,18 +26,18 @@ class AppCurrencyInput extends StatefulWidget {
 
 class _AppCurrencyInputState extends State<AppCurrencyInput> {
   late final TextEditingController _controller;
-
+  
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(
-      text: widget.initialValue?.toBrCurrency() ?? '',
-    );
+    _controller = widget.controller ?? TextEditingController(text: widget.initialValue?.toBrCurrency() ?? '');
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
@@ -55,7 +57,7 @@ class _AppCurrencyInputState extends State<AppCurrencyInput> {
           final numericString = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
           final value = (double.tryParse(numericString) ?? 0) / 100;
           final formatted = value.toBrCurrency();
-          
+
           widget.onChanged?.call(value);
 
           return TextEditingValue(

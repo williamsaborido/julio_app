@@ -19,17 +19,8 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   /// Obtém altura da tela
   double get screenHeight => MediaQuery.of(context).size.height;
 
-  /// Navega para uma nova tela (adiciona widget da rota no topo da pilha de navegação)
-  Future<void> navigateTo(String route, {Object? args}) {
-    if (mounted) {
-      return Navigator.of(context).pushNamed(route, arguments: args);
-    }
-
-    return Future.value();
-  }
-
-  /// Navega para uma nova tela (adiciona widget da rota no topo da pilha de navegação) e retorna um objeto result
-  Future<dynamic> navigateToAndReturn(String route, {Object? args}) {
+    /// Navega para uma nova tela (adiciona widget da rota no topo da pilha de navegação) e retorna um objeto result
+  Future<dynamic> navigateTo(String route, {Object? args }) {
     if (mounted) {
       return Navigator.of(context).pushNamed(route, arguments: args);
     }

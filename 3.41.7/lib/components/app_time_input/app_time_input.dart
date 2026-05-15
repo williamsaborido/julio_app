@@ -4,6 +4,7 @@ import 'package:julio_app/core/extensions.dart';
 class AppTimeInput extends StatefulWidget {
   final String label;
   final IconData icon;
+  final TextEditingController? controller;
   final TimeOfDay? initialValue;
   final String? Function(String?)? validator;
   final ValueChanged<TimeOfDay?>? onChanged;
@@ -12,6 +13,7 @@ class AppTimeInput extends StatefulWidget {
     super.key,
     required this.label,
     required this.icon,
+    this.controller,
     this.initialValue,
     this.validator,
     this.onChanged,
@@ -29,14 +31,16 @@ class _AppTimeInputState extends State<AppTimeInput> {
   void initState() {
     super.initState();
     _selectedTime = widget.initialValue;
-    _controller = TextEditingController(
+    _controller = widget.controller ?? TextEditingController(
       text: _selectedTime?.toBrString() ?? '',
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null){
+      _controller.dispose();
+    }
     super.dispose();
   }
 
