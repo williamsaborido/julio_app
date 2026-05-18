@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:julio_app/view/lancamento/lancamento_bind.dart';
+import 'package:julio_app/view/relatorio/relatorio_bind.dart';
 import 'package:julio_app/view/relatorio/relatorio_view.dart';
 
 class ShellView extends StatefulWidget {
@@ -14,7 +15,7 @@ class _ShellViewState extends State<ShellView> {
 
   final List<Widget> _pages = [
     const LancamentoBind(),
-    const RelatorioView(),
+    const RelatorioBind(),
   ];
 
   @override

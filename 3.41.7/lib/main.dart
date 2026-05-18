@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:julio_app/services/configuration.dart';
 import 'package:julio_app/services/database.dart';
+import 'package:julio_app/view/relatorio/impressao_view.dart';
 import 'package:julio_app/view/shell/shell_view.dart';
 import 'package:provider/provider.dart';
 
