@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:julio_app/services/configuration.dart';
 import 'package:julio_app/services/database.dart';
-import 'package:julio_app/view/lancamento/lancamento_bind.dart';
+import 'package:julio_app/view/shell/shell_view.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   final config = Configuration();
   await config.init();
 
@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
             darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark),
             ),
-            initialRoute: '/lancamentos',            
+            initialRoute: '/',            
             routes: {
-              '/lancamentos': (_) => const LancamentoBind(),
+              '/': (_) => const ShellView(),
             },
           );
         }
